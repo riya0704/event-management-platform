@@ -4,14 +4,6 @@ import { clerkClient, WebhookEvent } from '@clerk/nextjs/server'
 import { createUser, deleteUser, updateUser, CreateUserParams } from '@/lib/action/user.actions'
 import { NextResponse } from 'next/server'
 
-export type CreateUserParams = {
-  clerkId: string;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
-};
 
 export async function POST(req: Request) {
 
