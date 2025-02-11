@@ -1,3 +1,4 @@
+
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -79,5 +80,3 @@ export async function deleteUser(clerkId: string) {
     handleError(error)
   }
 }
-
-export type { CreateUserParams }
