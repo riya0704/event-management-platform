@@ -1,9 +1,10 @@
 {
-  "name": "event-management-platform",
-  "version": "0.1.0",
+  "name": "your-project-name",
+  "version": "1.0.0",
   "private": true,
   "engines": {
-    "go": "1.19"
+    "go": "1.19",
+    "node": ">=16.0.0"
   },
   "scripts": {
     "dev": "next dev",
