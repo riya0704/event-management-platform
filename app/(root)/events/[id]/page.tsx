@@ -2,29 +2,29 @@ import CategoryFilter from '@/components/shared/CategortFilter';
 import Collection from '@/components/shared/Collection';
 import Search from '@/components/shared/Search';
 import { Button } from '@/components/ui/button';
-import { getAllEvents } from '@/lib/action/event.actions';
-import { SearchParamProps } from '@/types';
+import { getAllEvents, getEventById } from '@/lib/action/event.actions';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface PageProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }> | { id: string };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }> | { [key: string]: string | string[] | undefined };
 }
 
 export default async function EventDetails({
   params,
   searchParams,
-}: {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined } | undefined;
-}) {
-  const eventId = params.id;
-  const page = searchParams?.page ? Number(searchParams.page) : 1;
-  // Fetch event details and related events here using eventId and page
-
+}: PageProps) {
+  // Resolve both params and searchParams
+  const resolvedParams = await Promise.resolve(params);
   const sp = await Promise.resolve(searchParams);
-
+  
+  const eventId = resolvedParams.id;
+  const page = Number(sp?.page) || 1;
+  
+  // Get event details
+  const event = await getEventById(eventId);
+  
   const searchText = (sp?.query as string) || '';
   const category = (sp?.category as string) || '';
 
@@ -34,6 +34,10 @@ export default async function EventDetails({
     page,
     limit: 6
   });
+
+  if (!event) {
+    return <div>Event not found</div>;
+  }
 
   return (
     <>
