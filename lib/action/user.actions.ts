@@ -80,4 +80,4 @@ export async function deleteUser(clerkId: string) {
   }
 }
 
-export { CreateUserParams }
+export type { CreateUserParams }
