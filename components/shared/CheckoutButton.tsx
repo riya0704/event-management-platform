@@ -7,7 +7,6 @@ import React from 'react'
 import { Button } from '../ui/button'
 import Checkout from './Checkout'
 
-
 const CheckoutButton = ({ event }: { event: IEvent }) => {
   const { user } = useUser();
   const userId = user?.publicMetadata.userId as string;

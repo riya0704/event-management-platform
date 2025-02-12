@@ -1,9 +1,10 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
-import { clerkClient, WebhookEvent } from '@clerk/nextjs/server'
 import { createUser, deleteUser, updateUser } from '@/lib/action/user.actions'
 import { NextResponse } from 'next/server'
 import { CreateUserParams } from '@/types'
+import { WebhookEvent } from '@clerk/nextjs/server'
+import { clerkClient } from '@clerk/nextjs/server'
 
 
 export async function POST(req: Request) {
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    }) as WebhookEvent
+    }) as WebhookEvent;
   } catch (err) {
     console.error('Error verifying webhook:', err);
     return new Response('Error occured', {

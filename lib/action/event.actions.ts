@@ -21,7 +21,7 @@ const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: 'i' } })
 }
 
-const populateEvent = async (query: any) => {
+const populateEvent = (query: any) => {
   return query
     .populate({ path: 'organizer', model: User, select: '_id firstName lastName' })
     .populate({ path: 'category', model: Category, select: '_id name' })
@@ -30,33 +30,17 @@ const populateEvent = async (query: any) => {
 // CREATE
 export async function createEvent({ userId, event, path }: CreateEventParams) {
   try {
-    await connectToDatabase();
-    console.log('createEvent userId:', userId); // Log the userId
+    await connectToDatabase()
 
-    let organizer = null;
-    let retryCount = 0;
-    const maxRetries = 3;
+    const organizer = await User.findById(userId)
+    if (!organizer) throw new Error('Organizer not found')
 
-    while (!organizer && retryCount < maxRetries) {
-      organizer = await User.findOne({ clerkId: userId });
-      if (!organizer) {
-        console.log(`Organizer not found, retrying... (Attempt ${retryCount + 1})`);
-        retryCount++;
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
-      }
-    }
+    const newEvent = await Event.create({ ...event, category: event.categoryId, organizer: userId })
+    revalidatePath(path)
 
-    if (!organizer) {
-      throw new Error(`Organizer not found after ${maxRetries} retries`);
-    }
-
-    const newEvent = await Event.create({ ...event, category: event.categoryId, organizer: organizer._id });
-
-    revalidatePath(path);
-
-    return JSON.parse(JSON.stringify(newEvent));
-  } catch (error: any) { // Specify the type of error as any
-    handleError(error);
+    return JSON.parse(JSON.stringify(newEvent))
+  } catch (error) {
+    handleError(error)
   }
 }
 
@@ -81,8 +65,8 @@ export async function updateEvent({ userId, event, path }: UpdateEventParams) {
     await connectToDatabase()
 
     const eventToUpdate = await Event.findById(event._id)
-    if (!eventToUpdate || eventToUpdate.organizer.toString() !== userId) {
-      throw new Error('Unauthorized')
+    if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
+      throw new Error('Unauthorized or event not found')
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
@@ -105,8 +89,6 @@ export async function deleteEvent({ eventId, path }: DeleteEventParams) {
 
     const deletedEvent = await Event.findByIdAndDelete(eventId)
     if (deletedEvent) revalidatePath(path)
-
-    return deletedEvent ? JSON.parse(JSON.stringify(deletedEvent)) : null
   } catch (error) {
     handleError(error)
   }
@@ -147,7 +129,7 @@ export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUs
     await connectToDatabase()
 
     const conditions = { organizer: userId }
-    const skipAmount = (Number(page) - 1) * limit
+    const skipAmount = (page - 1) * limit
 
     const eventsQuery = Event.find(conditions)
       .sort({ createdAt: 'desc' })

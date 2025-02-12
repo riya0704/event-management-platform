@@ -18,7 +18,6 @@ import {
 import { deleteEvent } from '@/lib/action/event.actions'
 
 
-
 export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
   const pathname = usePathname()
   let [isPending, startTransition] = useTransition()

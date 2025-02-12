@@ -3,23 +3,25 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { eventFormSchema } from "@/lib/validator"
 import * as z from 'zod'
 import { eventDefaultValues } from "@/constants"
+import Dropdown from "./Dropdown"
+import { Textarea } from "@/components/ui/textarea"
+import { FileUploader } from "./FileUploader"
 import { useState } from "react"
 import Image from "next/image"
+import DatePicker from "react-datepicker";
+import { useUploadThing } from '@/lib/uploadthing'
+
+import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox"
 import { useRouter } from "next/navigation"
 import { IEvent } from "@/lib/database/models/event.model"
 import { createEvent, updateEvent } from "@/lib/action/event.actions"
-import { FileUploader } from "./FileUploader"
-import { Textarea } from "../ui/textarea"
-import { Input } from "../ui/input"
-import Dropdown from "./Dropdown"
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
-import { eventFormSchema } from "@/lib/validator"
-import { useUploadThing } from "@/lib/uploadthing"
-import DatePicker from "react-datepicker"
-import "react-datepicker/dist/react-datepicker.css";
+
 
 type EventFormProps = {
   userId: string
@@ -201,7 +203,7 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                         className="filter-grey"
                       />
                       <p className="ml-3 whitespace-nowrap text-grey-600">Start Date:</p>
-                      <DatePicker  
+                      <DatePicker 
                         selected={field.value} 
                         onChange={(date) => field.onChange(date)} 
                         showTimeSelect

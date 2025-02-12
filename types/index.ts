@@ -1,3 +1,9 @@
+// In @/types/index.ts or similar
+export type SearchParamProps = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
 // ====== USER PARAMS
 export type CreateUserParams = {
   clerkId: string
@@ -143,7 +149,3 @@ export type RemoveUrlQueryParams = {
   keysToRemove: string[]
 }
 
-export type SearchParamProps = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
